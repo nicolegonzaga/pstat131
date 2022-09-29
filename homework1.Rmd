@@ -1,0 +1,71 @@
+---
+title: "TEST"
+output: html_document
+date: "2022-09-29"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### Question 1
+Supervised and unsupervised learning. In Supervised learning, there is an associated response variable for each of the predictors. In unsupervised learning, there is no associated response variable for each observation. Unsupervised learning is used to understand the relationships between the variables.
+
+#### Question 2
+A regression model uses quantitative data and quantitative response, while classification model uses qualitative data and response.
+
+
+#### Question 3
+Regression ML Problems: linear regression, multiple linear regression
+Classification ML Problems: logistic regression, neural networks
+
+#### Question 4
+Descriptive models: models that best visually emphasize a trend in data
+Inferential models: the goal is to predict the response variable with minimum error
+Predictive models: states relationship between response and predictors; test theories; asks which features are significant
+
+#### Question 5
+#### Question 6
+
+## Exploratory Data Analysis
+Downloading libraries
+```{r}
+library(tidyverse)
+library(ggplot2)
+```
+
+#### Question 1
+```{r}
+hist(mpg$hwy)
+```
+The histogram seems to be right skewed, which means that there are higher frequencies of lower highway mileage. Highway mileage between 25-30 mpg have the highest frequency.
+
+#### Question 2
+```{r}
+ggplot(mpg, aes(x=hwy, y=cty)) + geom_point()
+```
+There seems to be a positive relationship between hwy and cty. This could mean that
+
+#### Question 3
+HOw to order by height?
+```{r}
+counts <- table(mpg$manufacturer)
+
+ggplot(mpg, aes(manufacturer)) + geom_bar(stat="count") + coord_flip
+```
+
+#### Question 4
+```{r}
+ggplot(mpg, aes(x=cyl, y=hwy, color=cyl, group = cyl)) +
+  geom_boxplot()
+```
+
+#### Question 5
+```{r}
+library(corrplot)
+```
+
+```{r}
+m <- cor(mpg)
+corrplot(m, method = 'color')
+```
