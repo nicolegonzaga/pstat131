@@ -25,7 +25,14 @@ Inferential models: the goal is to predict the response variable with minimum er
 Predictive models: states relationship between response and predictors; test theories; asks which features are significant
 
 #### Question 5
+Mechanistic predictive models usually have assumptions about the relationship between the outcome and predictors, and are generally less flexible than empirically-driven models. Empirically driven models usually require a larger number of observations and are much more flexible. They are have no assumptions. A mechanistic model is generally easier to understand because we are predicting future events based on assumptions about the data.
+
+Bias-variance tradeoff: Using more flexible statistical methods will result in higher variance and lower bias, and more inflexibility means low variance, and higher bias.
+
 #### Question 6
+A. This question is predictive since they are predicting which candidate a voter will choose based on the voter's data/characteristics.
+B. This question is inferential because its interested in the relationship between the outcome and predictors.
+
 
 ## Exploratory Data Analysis
 Downloading libraries
@@ -38,38 +45,29 @@ library(ggplot2)
 ```{r}
 hist(mpg$hwy)
 ```
-The histogram seems to be right skewed, which means that there are higher frequencies of lower highway mileage. Highway mileage between 25-30 mpg have the highest frequency.
+The histogram seems to be rightly skewed, which means that there are higher frequencies of lower highway mileage. Highway mileage between 25-30 mpg have the highest frequency.
 
 #### Question 2
 ```{r}
 ggplot(mpg, aes(x=hwy, y=cty)) + geom_point()
 ```
-There seems to be a positive relationship between hwy and cty. This could mean that
+There seems to be a positive linear relationship between hwy and cty. As the highway mileage increases, city mileage also increases. 
 
 #### Question 3
 HOw to order by height?
 ```{r}
-counts <- table(mpg$manufacturer)
 
-ggplot(mpg, aes(manufacturer)) + geom_bar(stat="count") + coord_flip
+ggplot(mpg, aes(manufacturer)) + geom_bar(stat="count") + coord_flip()
 ```
+Dodge produced the most cars and Lincoln has produced the least.
 
 #### Question 4
 ```{r}
 ggplot(mpg, aes(x=cyl, y=hwy, color=cyl, group = cyl)) +
   geom_boxplot()
 ```
+Yes it seems that less highway mileage is being used as the number od cylinders increase. There is also no data for cars with 7 cyls.
 
-#### Question 5
-```{r}
-library(corrplot)
-```
-
-```{r}
-mpg
-m <- cor(mpg)
-corrplot(m, method = 'color')
-```
 
 ```{r}
 df <- data.frame(mpg$displ, mpg$year, mpg$cyl, mpg$cty, mpg$hwy)
@@ -77,4 +75,7 @@ df
 m <- cor(df)
 corrplot(m, method = 'color', type = 'lower')
 ```
-It seems that hfjdnfjbefghf
+Highly positively correlated: hwy & cty, cyl & displ
+Highly negatively correlated: hwy & displ, cty & displ, hwy & cyl, cty & cyl
+
+These relationships seem to make sense to me. Hwy & cty, and hwy & cyl relationships make sense since we have visualized these relationships in #1 and 4. 
