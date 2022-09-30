@@ -66,14 +66,6 @@ library(corrplot)
 ```
 
 ```{r}
-mpg
 m <- cor(mpg)
 corrplot(m, method = 'color')
-```
-
-```{r}
-df <- data.frame(mpg$displ, mpg$year, mpg$cyl, mpg$cty, mpg$hwy)
-df
-m <- cor(df)
-corrplot(m, method = 'color', type = 'lower')
 ```
