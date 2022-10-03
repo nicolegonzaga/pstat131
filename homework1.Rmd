@@ -1,6 +1,8 @@
 ---
-title: "TEST"
-output: html_document
+title: "Homework 1"
+output:
+  pdf_document: default
+  html_document: default
 date: "2022-09-29"
 ---
 
@@ -45,20 +47,21 @@ library(ggplot2)
 ```{r}
 hist(mpg$hwy)
 ```
+
 The histogram seems to be rightly skewed, which means that there are higher frequencies of lower highway mileage. Highway mileage between 25-30 mpg have the highest frequency.
 
 #### Question 2
 ```{r}
 ggplot(mpg, aes(x=hwy, y=cty)) + geom_point()
 ```
+
 There seems to be a positive linear relationship between hwy and cty. As the highway mileage increases, city mileage also increases. 
 
 #### Question 3
-HOw to order by height?
 ```{r}
-
 ggplot(mpg, aes(manufacturer)) + geom_bar(stat="count") + coord_flip()
 ```
+
 Dodge produced the most cars and Lincoln has produced the least.
 
 #### Question 4
@@ -70,12 +73,14 @@ Yes it seems that less highway mileage is being used as the number od cylinders 
 
 
 ```{r}
+library(corrplot)
+
 df <- data.frame(mpg$displ, mpg$year, mpg$cyl, mpg$cty, mpg$hwy)
-df
 m <- cor(df)
 corrplot(m, method = 'color', type = 'lower')
 ```
-Highly positively correlated: hwy & cty, cyl & displ
-Highly negatively correlated: hwy & displ, cty & displ, hwy & cyl, cty & cyl
 
-These relationships seem to make sense to me. Hwy & cty, and hwy & cyl relationships make sense since we have visualized these relationships in #1 and 4. 
+##### Highly positively correlated: hwy & cty, cyl & displ
+##### Highly negatively correlated: hwy & displ, cty & displ, hwy & cyl, cty & cyl
+
+These relationships make sense to me. Hwy & cty, and hwy & cyl relationships make sense since we have visualized these relationships in #1 and 4. 
