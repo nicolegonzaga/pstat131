@@ -1,0 +1,128 @@
+---
+title: "hw2"
+output:
+  pdf_document: default
+  html_document: default
+date: "2022-10-12"
+---
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(tidymodels)
+library(corrplot)
+library(ggthemes)
+```
+
+```{r}
+#Reading in data
+setwd("~/Downloads/homework-2 4")
+abalone <- read_csv(file = "data/abalone.csv")
+head(abalone)
+```
+### Question 1
+```{r}
+#Calculating the number of rings then adding the age column to the data set
+abalone$age <- abalone$rings + 1.5
+```
+
+
+#### Creating a histogram to describe the distribution of Age
+```{r}
+abalone %>% 
+  ggplot(aes(x = age)) +
+  geom_histogram(bins = 30)
+```
+It seens that the histogram is slightly positively skewed. This means that most abalones are less than 20 years old. 
+
+
+## Question 2
+```{r}
+set.seed(0426)
+
+#Splitting data
+abalone_split <- initial_split(abalone, prop = 0.80,
+                                strata = age)
+
+#Testing and training data
+abalone_train <- training(abalone_split)
+abalone_test <- testing(abalone_split)
+```
+
+## Question 3
+```{r}
+#Creating a recipe for abalone
+simple_abalone_recipe <-
+  recipe(age ~ ., data = abalone_train)
+```
+We shouldn't use rings because age actually depends on the value of rings
+
+
+```{r}
+#Dummy coding categorical predictors
+abalone_recipe <- recipe(age ~ ., data = abalone_train) %>% 
+   step_dummy(all_nominal_predictors()) %>% 
+  step_rm(contains('rings')) %>%
+  step_interact(terms = ~ starts_with("type"):shucked_weight + #Interacation terms
+                  longest_shell:diameter + 
+                  shucked_weight:shell_weight) %>%
+  step_scale(all_predictors()) %>%
+  step_center(all_predictors())
+
+names(abalone)
+```
+
+### Question 4
+```{r}
+lm_model <- linear_reg() %>% 
+  set_engine("lm")
+```
+
+### Question 5
+```{r}
+#Setting up empty workflow
+lm_wflow <- workflow() %>% 
+  add_model(lm_model) %>% 
+  add_recipe(abalone_recipe)
+lm_wflow
+```
+
+```{r}
+#Adding the model previously created
+lm_fit <- fit(lm_wflow, abalone_train)
+lm_fit %>% 
+  # This returns the parsnip object:
+  extract_fit_parsnip() %>% 
+  # Now tidy the linear model object:
+  tidy()
+```
+
+
+### Question 6
+```{r}
+#Predicting age of the hypothetical female abalone
+predict(lm_fit, data.frame(longest_shell = 0.50, diameter = 0.10, height = 0.30, whole_weight = 4, shucked_weight = 1, viscera_weight = 2, shell_weight = 1, type = 'F', rings = 0))
+```
+Our predicted age for this female abalone is about 24 years.
+
+#### Question 7
+```{r}
+#Generates predicted values for each observation in abalone_train
+abalone_train_res <- predict(lm_fit, new_data = abalone_train %>% select(-age))
+abalone_train_res %>% 
+  head()
+
+```
+```{r}
+#Attaching columns to actual age observations
+abalone_train_res <- bind_cols(abalone_train_res, abalone_train %>% select(age))
+abalone_train_res %>% head
+```
+
+```{r}
+#Creating a metric set
+library(yardstick)
+abalone_metrics <- metric_set(rmse, rsq, mae)
+abalone_metrics(abalone_train_res, truth = age, 
+                estimate = .pred)
+```
+Our RMSE = 2.144, MAE = 1.536, and $R^2$ value is 0.557108. This $R^2$ value indicates that about 56% of the variability in the response can be explained by this linear regression model. This can mean that our model is not the worst model for the abalone data, but it would also not be the best model.
